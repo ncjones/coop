@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: ${{ matrix.cc }} on ubuntu-latest
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run tests
+        env:
+          CC: ${{ matrix.cc }}
+        run: make test
