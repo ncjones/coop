@@ -1,0 +1,10 @@
+Coop.h
+Copyright 2026 Nathan Jones
+
+This product includes software developed at
+github.com/ncjones/coop.
+
+This product bundles Unity (https://github.com/ThrowTheSwitch/Unity) for
+its test suite under vendor/unity/. Unity is licensed under the MIT
+License; see vendor/unity/unity.h for the SPDX identifier and
+copyright notice.
