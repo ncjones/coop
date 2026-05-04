@@ -1,0 +1,1 @@
+#define UNITY_INCLUDE_DOUBLE
