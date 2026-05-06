@@ -21,3 +21,22 @@ jobs:
         env:
           CC: ${{ matrix.cc }}
         run: make test
+
+  test-windows:
+    name: mingw-w64 on windows-latest
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            make
+      # libasan/libubsan don't build for MinGW-w64; build without sanitizers.
+      - name: Build and run tests
+        run: make sanitize=false test
