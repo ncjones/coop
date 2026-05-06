@@ -8,11 +8,12 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.cc }} on ubuntu-latest
-    runs-on: ubuntu-latest
+    name: ${{ matrix.cc }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
         cc: [gcc, clang]
     steps:
       - uses: actions/checkout@v4
