@@ -159,6 +159,7 @@ __attribute__((weak)) int $rc_releases;
  */
 #define $retain(obj) ({ \
   __typeof__(obj) _obj = (obj); \
+  assert(_obj != NULL && "Retain called on null pointer"); \
   $_rc_trace("Retain", _obj); \
   $_rc_track_retain(); \
   (_obj)->$_REF_COUNT_MEMBER++; \
@@ -168,16 +169,18 @@ __attribute__((weak)) int $rc_releases;
 /**
  * Decrement an object's reference count. When the count reaches zero, calls
  * $DESTROY (if non-NULL) and frees the object. Asserts that the count is
- * positive on entry.
+ * positive on entry. NULL is permitted and is a no-op.
  */
 #define $release(obj) do { \
   __typeof__(obj) _obj = (obj); \
-  $_rc_trace("Release", _obj); \
-  assert(_obj->$_REF_COUNT_MEMBER > 0 && "Release called on unretained object"); \
-  $_rc_track_release(); \
-  if (--_obj->$_REF_COUNT_MEMBER < 1) { \
-    if (_obj->$_DESTROY_MEMBER) _obj->$_DESTROY_MEMBER(_obj); \
-    free(_obj); \
+  if (_obj) { \
+    $_rc_trace("Release", _obj); \
+    assert(_obj->$_REF_COUNT_MEMBER > 0 && "Release called on unretained object"); \
+    $_rc_track_release(); \
+    if (--_obj->$_REF_COUNT_MEMBER < 1) { \
+      if (_obj->$_DESTROY_MEMBER) _obj->$_DESTROY_MEMBER(_obj); \
+      free(_obj); \
+    } \
   } \
 } while (0)
 
@@ -191,9 +194,7 @@ __attribute__((weak)) int $rc_releases;
 
 static inline void $_auto_release(void *pp) {
   void **p = pp;
-  if (*p) {
-    $release(($_RcHeader *) *p);
-  }
+  $release(($_RcHeader *) *p);
 }
 
 

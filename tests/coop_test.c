@@ -321,3 +321,9 @@ void test_release_is_statement_safe_in_unbraced_if_else(void) {
   if (obj->$_REF_COUNT_MEMBER < 100) $release(obj);
   else $retain(obj);
 }
+
+void test_release_null_is_noop(void) {
+  RcObj *obj = NULL;
+  $release(obj);
+  TEST_ASSERT_EQUAL_INT(0, $rc_releases);
+}
