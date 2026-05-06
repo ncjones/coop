@@ -541,8 +541,9 @@ also exposed as `COOP_VERSION_MAJOR`, `COOP_VERSION_MINOR`, and
 
 **Ref-Counted Cycles Leak** Pure reference counting cannot reclaim cyclic
 references. If object A retains B and B retains A, releasing both external
-references leaves the cycle alive in memory. Avoid cycles by using borrowed
-(non-retained) references for back-pointers.
+references leaves the cycle alive in memory. The Recipes section covers two
+mitigations: borrowed back-pointers when one side's lifetime is bounded by
+the other's, and an explicit `terminate` protocol when it isn't.
 
 **Not Thread-Safe** Refcount mutation is non-atomic. Sharing `$struct`
 objects across threads requires external synchronization.
