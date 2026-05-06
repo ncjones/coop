@@ -70,19 +70,6 @@ syntax dispatches `deposit` and `get_balance` polymorphically through the
 abstract `Account` interface, and `$auto` releases `a` when `demo`
 returns.
 
-## Portability
-
-Coop.h is built on GNU C extensions and works with GCC and Clang. It is not
-portable to MSVC. Specifically:
-
-- **`$`-prefixed identifiers** require `-fdollars-in-identifiers` (on by
-  default in GCC/Clang). Compiling under `-Wpedantic` flags this and the
-  other GNU extensions coop relies on (`({...})` statement expressions,
-  `, ##__VA_ARGS__`); compile coop with `-Wall -Wextra` instead, or
-  whitelist the relevant extension warnings.
-- **`$auto`** uses the `cleanup` variable attribute, which MSVC does not
-  support.
-
 ## Macros
 
 Coop.h's API is a small set of macros grouped into three features: method
@@ -548,10 +535,18 @@ the other's, and an explicit `terminate` protocol when it isn't.
 **Not Thread-Safe** Refcount mutation is non-atomic. Sharing `$struct`
 objects across threads requires external synchronization.
 
-**MSVC Not Supported** Coop relies on GNU C extensions (the `cleanup`
-variable attribute, statement expressions, dollar identifiers, and
-zero-argument variadic macros). GCC and Clang both support all of them;
-MSVC supports none of them.
+## Portability
+
+Coop.h is built on GNU C extensions and works with GCC and Clang. It is not
+portable to MSVC. Specifically:
+
+- **`$`-prefixed identifiers** require `-fdollars-in-identifiers` (on by
+  default in GCC/Clang). Compiling under `-Wpedantic` flags this and the
+  other GNU extensions coop relies on (`({...})` statement expressions,
+  `, ##__VA_ARGS__`); compile coop with `-Wall -Wextra` instead, or
+  whitelist the relevant extension warnings.
+- **`$auto`** uses the `cleanup` variable attribute, which MSVC does not
+  support.
 
 ## Why Reference Counting?
 
