@@ -20,9 +20,9 @@ static void crash_handler(int sig) {
   if (Unity.CurrentTestName) {
     fprintf(
       stderr,
-      "%s:%ld:%s:FAIL: Crash (Sig %d)\n",
+      "%s:%lu:%s:FAIL: Crash (Sig %d)\n",
       Unity.TestFile,
-      Unity.CurrentTestLineNumber,
+      (unsigned long)Unity.CurrentTestLineNumber,
       Unity.CurrentTestName,
       sig
     );
@@ -34,7 +34,9 @@ static void crash_handler(int sig) {
 static void install_crash_handler(void) {
   signal(SIGSEGV, crash_handler);
   signal(SIGABRT, crash_handler);
+#ifdef SIGBUS
   signal(SIGBUS,  crash_handler);
+#endif
 }
 
 void test_interface_ptr_cast_to_void_ptr_gives_same_address(void);
