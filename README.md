@@ -396,7 +396,7 @@ $end
 
 static void Parent_destroy(void *self_) {
   Parent *self = self_;
-  if (self->child) $release(self->child);
+  $release(self->child);
 }
 
 // Child has no $DESTROY — it does not own its parent reference.
@@ -405,6 +405,58 @@ static void Parent_destroy(void *self_) {
 This pattern is safe only when the child's lifetime is bounded by the
 parent's. If the child can outlive the parent, the back-pointer becomes a
 dangling pointer.
+
+**The leak detector cannot witness this failure.** `$rc_retains` and
+`$rc_releases` count only retained references; a borrowed back-pointer
+that outlives its target produces a use-after-free at the next
+dereference, not a refcount imbalance at teardown. Tests that exercise
+the escape path will crash or read corrupted memory; tests that do not
+will report a clean balance. Enforce bounded lifetime structurally —
+through factories, ownership chains, or scoping discipline — rather than
+relying on the leak detector to notice violations.
+
+### Terminate Protocol When Bounded Lifetimes Aren't Enough
+
+When a child may genuinely outlive its parent, or the bounded-lifetime
+contract is too fragile to enforce by convention, the cycle can be
+broken explicitly. Both pointers become strong retains — refcount
+balance is honest — and the parent exposes a `terminate` method that
+walks its references and releases each. The parent's structural owner
+calls `terminate` before releasing the parent.
+
+```c
+$struct(Parent)
+  void (*terminate)(Parent *self);
+  Child *child;       // strong
+$end
+
+$struct(Child)
+  Parent *parent;     // strong
+$end
+
+static void Parent_terminate(Parent *self) {
+  $release(self->child);
+  self->child = NULL;
+}
+
+static void Child_destroy(void *self_) {
+  Child *self = self_;
+  $release(self->parent);
+}
+
+// At the parent's owning site:
+$(parent, terminate);
+$release(parent);
+```
+
+Both failure modes are now loud:
+
+- *Forgetting `terminate`* leaks the cycle, caught by `$rc_retains` /
+  `$rc_releases` at test teardown.
+- *Calling `terminate` too early* — while a child has escaped — leaves
+  the parent's contents cleared. The escaped child's next reach into
+  the parent surfaces as a domain-level error (a missing field, an
+  unbound name) rather than memory corruption.
 
 ### Auto-Release for Locals
 
