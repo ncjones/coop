@@ -555,27 +555,28 @@ MSVC supports none of them.
 
 ## Why Reference Counting?
 
-Heap allocation is essential when an object needs to outlive its creating
-context or when its clients cannot know its concrete type (as is the case
-with Coop.h's information hiding). Heap allocation brings challenges though
-for managing object lifecycles. Adding a new dependency on a heap-allocated
-object can break prior assumptions about when the object should be
-destroyed. Those assumptions are frequently located far away from the code
-being changed which makes them particularly error-prone.
+Heap-allocated objects need an answer to "when is this freed?" The
+answer is hard because the code that decides when an object should
+die is often far from the code that introduced the dependency
+keeping it alive. Three strategies dominate:
 
-The object lifecycle problem can be solved with arenas, garbage collection
-(GC), or reference counting (RC). Arenas are excellent for transient
-allocations bounded by a known scope, but objects with shared ownership or
-unpredictable lifetimes outlive any single arena. Tracing GC handles
-arbitrary lifetimes and cycles but adds runtime infrastructure and
-unpredictable pause behavior.
+- **Arenas** tie an object's lifetime to an enclosing scope. They
+  make freeing free — but only when every object in the arena dies
+  together, which fails the moment ownership is shared or lifetimes
+  vary.
+- **Tracing garbage collection** handles arbitrary lifetimes,
+  including cycles, by reclaiming everything the program can no
+  longer reach. The cost is a runtime — a heap walker, a scheduler,
+  and unpredictable pauses.
+- **Reference counting** ties freeing to the last release, with no
+  runtime and a fixed per-operation cost. It can't reclaim cycles
+  without help — see Recipes for two mitigations.
 
-Coop.h uses reference counting rather than arenas or tracing GC. It provides
-predictable per-operation cost, no runtime, and ownership rules that can be
-checked locally at each function boundary. The cost is that memory
-management is spread throughout the codebase — every function that holds a
-reference participates in the protocol — rather than pushed to a boundary
-(arenas) or eliminated from application code (GC).
+Coop.h chooses RC because the alternatives each sacrifice a property
+coop wants to keep: arenas can't accommodate shared or varying
+lifetimes; GC can't promise predictable per-operation timing. RC
+handles both. The price is that reference management spreads across
+every function holding a reference — paid in code, not at runtime.
 
 ## Legal
 
