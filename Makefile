@@ -23,7 +23,11 @@ LDFLAGS =
 ifeq ($(sanitize),true)
   CFLAGS  += -fsanitize=address,undefined
   LDFLAGS += -fsanitize=address,undefined
-  export ASAN_OPTIONS = detect_leaks=1
+  # Apple clang's ASan rejects detect_leaks (no LSan); export only on Linux.
+  # Homebrew clang on macOS enables LSan by default.
+  ifeq ($(shell uname -s),Linux)
+    export ASAN_OPTIONS = detect_leaks=1
+  endif
 endif
 
 ifeq ($(rc_trace),true)
