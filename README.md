@@ -555,10 +555,14 @@ MSVC supports none of them.
 
 ## Why Reference Counting?
 
-Heap-allocated objects need an answer to "when is this freed?" The
-answer is hard because the code that decides when an object should
-die is often far from the code that introduced the dependency
-keeping it alive. Three strategies dominate:
+Heap-allocated objects need an answer to "when is this freed?" A
+destructor convention works when one piece of code clearly owns the
+object — but Coop is built for the opposite case: information hiding
+means clients hold abstract types and can't see who else holds a
+reference, when ownership transfers, or whether they are the last
+user. Forcing them to figure that out reintroduces the coupling
+Coop's interfaces are designed to eliminate. Three strategies lift
+lifetime decisions out of client code instead:
 
 - **Arenas** tie an object's lifetime to an enclosing scope. They
   make freeing free — but only when every object in the arena dies
