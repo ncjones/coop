@@ -19,9 +19,10 @@
 /*
  * Coop.h — Conventions for object-like C structs.
  *
- * Provides two independent facilities:
- *   1. Reference-counted structs: $struct, $new, $retain, $release, $auto
- *   2. Method dispatch: $call, $
+ * Provides three groups of macros:
+ *   1. Method dispatch: $call, $
+ *   2. Struct declaration: $struct, $end, $BASE
+ *   3. Reference counting: $new, $retain, $release, $auto, $DESTROY
  *
  * See README.md for the conceptual overview, reference-counting conventions,
  * usage examples, and leak detection guidance.
