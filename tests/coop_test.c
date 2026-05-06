@@ -315,3 +315,9 @@ void test_release_destroys_object(void) {
    TEST_ASSERT_EQUAL_INT(false, data.destroyed);
    $release(obj);
  }
+
+void test_release_is_statement_safe_in_unbraced_if_else(void) {
+  RcObj *obj = $new(RcObj, .$DESTROY=RcObj_destroy);
+  if (obj->$_REF_COUNT_MEMBER < 100) $release(obj);
+  else $retain(obj);
+}

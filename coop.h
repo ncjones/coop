@@ -170,7 +170,7 @@ __attribute__((weak)) int $rc_releases;
  * $DESTROY (if non-NULL) and frees the object. Asserts that the count is
  * positive on entry.
  */
-#define $release(obj) { \
+#define $release(obj) do { \
   __typeof__(obj) _obj = (obj); \
   $_rc_trace("Release", _obj); \
   assert(_obj->$_REF_COUNT_MEMBER > 0 && "Release called on unretained object"); \
@@ -179,7 +179,7 @@ __attribute__((weak)) int $rc_releases;
     if (_obj->$_DESTROY_MEMBER) _obj->$_DESTROY_MEMBER(_obj); \
     free(_obj); \
   } \
-}
+} while (0)
 
 /**
  * Variable attribute that calls $release on the variable's value when the
@@ -192,7 +192,7 @@ __attribute__((weak)) int $rc_releases;
 static inline void $_auto_release(void *pp) {
   void **p = pp;
   if (*p) {
-    $release(($_RcHeader *) *p)
+    $release(($_RcHeader *) *p);
   }
 }
 

@@ -67,6 +67,7 @@ void test_retain_arg_is_evaluated_once(void);
 void test_release_decrements_ref_counter(void);
 void test_release_destroys_object(void);
 void test_release_does_not_destroy_retained_object(void);
+void test_release_is_statement_safe_in_unbraced_if_else(void);
 
 int main(void) {
   install_crash_handler();
@@ -101,5 +102,6 @@ int main(void) {
   RUN_TEST(test_release_decrements_ref_counter);
   RUN_TEST(test_release_destroys_object);
   RUN_TEST(test_release_does_not_destroy_retained_object);
+  RUN_TEST(test_release_is_statement_safe_in_unbraced_if_else);
   return UNITY_END();
 }
