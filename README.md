@@ -475,8 +475,8 @@ the one without a matching release.
 ```c
 #include <coop/coop.h>
 
-#if COOP_VERSION < 100   // i.e. < 0.1.0
-#error "coop ≥ 0.1.0 required"
+#if COOP_VERSION < 10000   // i.e. < 1.0.0
+#error "coop ≥ 1.0.0 required"
 #endif
 ```
 

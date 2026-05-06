@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [0.1.0] — Unreleased
+## [1.0.0] — Unreleased
 
 Initial public release. Extracted from the byol Lisp project, where the
 header had been developed and used as the runtime substrate for an
@@ -29,4 +29,4 @@ interpreter.
 - `-DCOOP_RC_TRACE` — opt-in stdout trace of every retain, release, and
   `$new`.
 
-[0.1.0]: https://github.com/ncjones/coop/releases/tag/v0.1.0
+[1.0.0]: https://github.com/ncjones/coop/releases/tag/v1.0.0
