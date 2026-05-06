@@ -1,9 +1,10 @@
 # Coop.h
 
 A minimal macro vocabulary for writing object-like code in C. Single header, no
-dependencies beyond `stdlib.h` and `assert.h`. Supports encapsulation and
-polymorphism through method dispatch, information hiding through struct
-extension, and decoupled object lifecycles through reference counting.
+dependencies beyond `stdlib.h` and `assert.h` (and `stdio.h` when
+`COOP_RC_TRACE` is defined). Supports encapsulation and polymorphism through
+method dispatch, information hiding through struct extension, and decoupled
+object lifecycles through reference counting.
 
 ## Installation
 
