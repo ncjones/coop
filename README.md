@@ -535,6 +535,12 @@ the other's, and an explicit `terminate` protocol when it isn't.
 **Not Thread-Safe** Refcount mutation is non-atomic. Sharing `$struct`
 objects across threads requires external synchronization.
 
+**No Nested `$call`** `$call(printer, print, $call(foo, get_name))` does
+not compile: the C preprocessor will not re-expand a macro inside its own
+expansion (C11 6.10.3.4), and the `$` alias does not escape this since it
+expands to `$call`. Bind the inner result to a temporary instead:
+`const char *name = $call(foo, get_name); $call(printer, print, name);`.
+
 ## Portability
 
 Coop.h is built on GNU C extensions and works with GCC and Clang. It is not
