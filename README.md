@@ -154,8 +154,8 @@ The optional `.$DESTROY` field assigns a destructor function pointer.
 be used inline (e.g. `.field = $retain(arg)`).
 
 `$release(obj)` decrements the refcount and, when it reaches zero, calls
-`$DESTROY` (if set) and frees the struct. `$release` is not NULL-safe;
-guard with `if (obj) $release(obj)` when the value may be NULL.
+`$DESTROY` (if set) and frees the struct. `$release` is NULL-safe;
+it is a no-op when the value may be NULL.
 
 `$auto` is a variable attribute that calls `$release` automatically when the
 variable leaves scope. NULL values at scope exit are skipped. If the
